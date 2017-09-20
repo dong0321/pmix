@@ -55,7 +55,9 @@ static int fd_heartbeat_request_cb(struct pmix_peer_t *peer,
                                    pmix_ptl_hdr_t *hdr,
                                    pmix_buffer_t *buf, void *cbdata);
 
-static int fd_heartbeat_recv_cb(struct pmix_peer_t *peer,
+static void fd_event_cb(int fd, short flags, void* pdetector);
+
+void fd_heartbeat_recv_cb(struct pmix_peer_t *peer,
                                 pmix_ptl_hdr_t *hdr,
                                 pmix_buffer_t *buf, void *cbdata);
 
@@ -78,48 +80,56 @@ typedef struct {
     pmix_event_t ev;
     pmix_peer_t *peer;
 } pmix_pdetector_beat_t;
-
+PMIX_CLASS_INSTANCE(pmix_pdetector_ring_t,
+        pmix_object_t,
+        NULL, NULL);
 static pmix_status_t ring_start()
 {
-    //pmix_ring_trkr_t *ft;
-    size_t n;
-
+    pmix_pdetector_ring_t *ft_detector = &pmix_pdetector_world_ring;
+    fd_event_base = pmix_globals.evbase;
+    pmix_output(0,"[%s:%d] starting the detector for heartbeat", pmix_globals.myid.nspace, pmix_globals.myid.rank);
     PMIX_OUTPUT_VERBOSE((1, pmix_pdetector_base_framework.framework_output,
                          "[%s:%d] starting the detector for heartbeat",
                          pmix_globals.myid.nspace, pmix_globals.myid.rank));
 
     pmix_ptl.recv(pmix_globals.mypeer, fd_heartbeat_recv_cb, PMIX_PTL_TAG_RING_HEARTBEAT);
     pmix_ptl.recv(pmix_globals.mypeer, fd_heartbeat_recv_cb, PMIX_PTL_TAG_RING_HEARTBEAT_REQUEST);
+    ft_detector = PMIX_NEW(pmix_pdetector_ring_t);
 
-    /* need to push into our event base to add this to our trackers */
-  /*  pmix_event_assign(&ft->cdev, pmix_pdetector_base.evbase, -1,
-                      EV_WRITE, add_tracker, ft);
-    pmix_event_active(&ft->cdev, EV_WRITE, 1);
-*/
+    ft_detector->hb_period = pmix_ring_heartbeat_period;
+    ft_detector->hb_timeout = pmix_ring_heartbeat_timeout;
+    /* set a timer event to send heartbeat */
+    pmix_event_assign(&ft_detector->fd_event, pmix_globals.evbase, -1, PMIX_EV_TIMEOUT | PMIX_EV_PERSIST, fd_event_cb, ft_detector);
+
+    struct timeval tv;
+    tv.tv_sec = (int)(ft_detector->hb_period / 10.);
+    tv.tv_usec =1;// (-tv.tv_sec + (ft_detector->hb_period / 10.)) * 1e6;
+    pmix_event_evtimer_add(&ft_detector->fd_event, &tv);
+
     return PMIX_SUCCESS;
 }
 
 static pmix_status_t ring_stop(pmix_peer_t *requestor, char *id)
 {
- /*   ring_caddy_t *cd;
-
-    cd = PMIX_NEW(ring_caddy_t);
-    PMIX_RETAIN(requestor);
-    cd->requestor = requestor;
-    cd->id = strdup(id);
-
-    /* need to push into our event base to add this to our trackers */
-   /* pmix_event_assign(&cd->ev, pmix_pdetector_base.evbase, -1,
-                      EV_WRITE, del_tracker, cd);
-    pmix_event_active(&cd->ev, EV_WRITE, 1);
-*/
     return PMIX_SUCCESS;
 }
 
-static int fd_heartbeat_recv_cb(struct pmix_peer_t *peer,
+/*
+ * event loop and thread
+ */
+static void fd_event_cb(int fd, short flags, void* pdetector) {
+    //pmix_output(0,"---event callback for HB");
+}
+
+void fd_heartbeat_recv_cb(struct pmix_peer_t *peer,
         pmix_ptl_hdr_t *hdr,
         pmix_buffer_t *buf, void *cbdata)
 {
-    return PMIX_SUCCESS;
+    pmix_output(0,"++ft_detectorevent for heartbeat");
 }
 
+void pmix_pdetector_ring_recv_beats(struct pmix_peer_t *peer,
+        pmix_ptl_hdr_t *hdr,
+        pmix_buffer_t *buf, void *cbdata)
+{
+}

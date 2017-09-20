@@ -35,6 +35,7 @@ typedef struct {
     double hb_period;      /* the time spacing between heartbeat emission (eta) */
     double hb_sstamp;      /* the date at which the last hb emission was done */
 } pmix_pdetector_ring_t;
+PMIX_CLASS_DECLARATION(pmix_pdetector_ring_t);
 static pmix_pdetector_ring_t pmix_pdetector_world_ring;
 
 
