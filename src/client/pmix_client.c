@@ -96,7 +96,7 @@ static void notification_fn1(size_t evhdlr_registration_id,
         pmix_output(0,"Client notification_fn, event ninfo %s %s %s",info[i].key,info[i].value.type, info[i].value.data);
     }
     if (NULL != cbfunc) {
-        cbfunc(PMIX_SUCCESS, NULL, 0, NULL, NULL, cbdata);
+        cbfunc(PMIX_EVENT_ACTION_COMPLETE, NULL, 0, NULL, NULL, cbdata);
     }
 }
 
@@ -212,7 +212,7 @@ static void pmix_client_notify_recv(struct pmix_peer_t *peer,
     PMIX_INFO_LOAD(&chain->info[ninfo], PMIX_EVENT_RETURN_OBJECT, NULL, PMIX_POINTER);
 
     pmix_output_verbose(2, pmix_globals.debug_output,
-                        "[%s:%d] pmix:client_notify_recv - processing event %d, calling errhandler",
+                        "[%s:%d] IN new client pmix:client_notify_recv - processing event %d, calling errhandler",
                         pmix_globals.myid.nspace, pmix_globals.myid.rank, chain->status);
 
     pmix_invoke_local_event_hdlr(chain);

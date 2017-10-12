@@ -85,6 +85,7 @@ PMIX_CLASS_INSTANCE(pmix_pdetector_ring_t,
         NULL, NULL);
 static pmix_status_t ring_start()
 {
+    pmix_status_t rc;
     pmix_pdetector_ring_t *ft_detector = &pmix_pdetector_world_ring;
     fd_event_base = pmix_globals.evbase;
     pmix_output(0,"[%s:%d] starting the detector for heartbeat", pmix_globals.myid.nspace, pmix_globals.myid.rank);
@@ -92,8 +93,8 @@ static pmix_status_t ring_start()
                          "[%s:%d] starting the detector for heartbeat",
                          pmix_globals.myid.nspace, pmix_globals.myid.rank));
 
-    pmix_ptl.recv(pmix_globals.mypeer, fd_heartbeat_recv_cb, PMIX_PTL_TAG_RING_HEARTBEAT);
-    pmix_ptl.recv(pmix_globals.mypeer, fd_heartbeat_recv_cb, PMIX_PTL_TAG_RING_HEARTBEAT_REQUEST);
+    PMIX_PTL_RECV(rc,pmix_globals.mypeer, fd_heartbeat_recv_cb, PMIX_PTL_TAG_RING_HEARTBEAT);
+    PMIX_PTL_RECV(rc,pmix_globals.mypeer, fd_heartbeat_recv_cb, PMIX_PTL_TAG_RING_HEARTBEAT_REQUEST);
     ft_detector = PMIX_NEW(pmix_pdetector_ring_t);
 
     ft_detector->hb_period = pmix_ring_heartbeat_period;

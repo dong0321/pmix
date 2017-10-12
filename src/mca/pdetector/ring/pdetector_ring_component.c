@@ -50,12 +50,12 @@ pmix_pdetector_ring_component_t mca_pdetector_ring_component = {
   */
 static int ring_open(void)
 {
+    pmix_status_t rc;
     PMIX_CONSTRUCT(&mca_pdetector_ring_component.trackers, pmix_list_t);
-
     /* setup to receive rings */
-    pmix_ptl.recv(pmix_globals.mypeer, pmix_pdetector_ring_recv_beats, PMIX_PTL_TAG_RING_HEARTBEAT);
+    PMIX_PTL_RECV(rc, pmix_globals.mypeer, pmix_pdetector_ring_recv_beats, PMIX_PTL_TAG_RING_HEARTBEAT);
 
-    return PMIX_SUCCESS;
+    return rc;
 }
 
 
@@ -72,10 +72,11 @@ static int ring_query(pmix_mca_base_module_t **module, int *priority)
 
 static int ring_close(void)
 {
+    pmix_status_t rc;
     /* cancel our persistent recv */
-    pmix_ptl.cancel(pmix_globals.mypeer, PMIX_PTL_TAG_RING_HEARTBEAT);
+    PMIX_PTL_CANCEL(rc,pmix_globals.mypeer, PMIX_PTL_TAG_RING_HEARTBEAT);
 
     PMIX_LIST_DESTRUCT(&mca_pdetector_ring_component.trackers);
 
-    return PMIX_SUCCESS;
+    return rc;
 }

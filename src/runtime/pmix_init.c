@@ -273,7 +273,7 @@ int pmix_rte_init(pmix_proc_type_t type,
         goto return_error;
     }
 
-    if (PMIX_SUCCESS != (ret = pmix_mca_base_framework_open(&pmix_pdetector_base_framework, 0))) {
+    /*if (PMIX_SUCCESS != (ret = pmix_mca_base_framework_open(&pmix_pdetector_base_framework, 0))) {
         error = "pmix_pdetector_base_open";
         return ret;
     }
@@ -281,7 +281,7 @@ int pmix_rte_init(pmix_proc_type_t type,
          error = "pmix_pdetector_base_select";
          goto return_error;
     }
-
+    */
     if (PMIX_SUCCESS != (ret = pmix_mca_base_framework_open(&pmix_perrmgr_base_framework, 0))) {
         error = "pmix_perrmgr_base_open";
         return ret;
@@ -293,7 +293,6 @@ int pmix_rte_init(pmix_proc_type_t type,
 
     /* tell libevent that we need thread support */
     pmix_event_use_threads();
->>>>>>> ring detector addded as a module
 
     /* if an external event base wasn't provide, create one */
     if (!pmix_globals.external_evbase) {
