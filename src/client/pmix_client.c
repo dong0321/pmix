@@ -89,15 +89,11 @@ static void notification_fn1(size_t evhdlr_registration_id,
         void *cbdata)
 {
     pmix_output(0,"Client notification_fn, event happened from source %s:%d with status %d with %d info %s type %d  \n",
-            source->nspace,source->rank,status, ninfo, info[0].key, info[0].value.type, info[0].value.data);//->proc.nspace, info[0].value.data->proc.rank);
-    int i;
-    for(i=0; i<ninfo; i++ )
-    {
-        pmix_output(0,"Client notification_fn, event ninfo %s %s %s",info[i].key,info[i].value.type, info[i].value.data);
-    }
+            source->nspace,source->rank,status, ninfo, info[0].key, info[0].value.type, info[0].value.data);
     if (NULL != cbfunc) {
         cbfunc(PMIX_EVENT_ACTION_COMPLETE, NULL, 0, NULL, NULL, cbdata);
     }
+    pmix_output(0,"Client notification received, i am done");
 }
 
 static void errhandler_reg_callbk1(pmix_status_t status,
@@ -618,7 +614,7 @@ PMIX_EXPORT pmix_status_t PMIx_Init(pmix_proc_t *proc,
     pmix_status_t status;
     status = PMIX_ERR_PROC_ABORTED;
     PMIx_Register_event_handler(&status, 1, NULL, 0,
-            notification_fn1, errhandler_reg_callbk1, &errhandler_refs);
+            notification_fn1, NULL, &errhandler_refs);//errhandler_reg_callbk1
 
     /* check to see if we need to notify anyone */
     if (NULL != info) {
