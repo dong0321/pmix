@@ -82,11 +82,10 @@ int pmix_pdetector_base_select(void)
     }
 
     if (4 < pmix_output_get_verbosity(pmix_pdetector_base_framework.framework_output)) {
-        pmix_output(0, "Final PDETECTOR priorities");
         /* show the prioritized list */
         PMIX_LIST_FOREACH(active, &pmix_pdetector_base.actives, pmix_pdetector_active_module_t) {
-            pmix_output(0, "\tPDETECTOR: %s Priority: %d",
-                        active->component->base.pmix_mca_component_name, active->priority);
+            pmix_output_verbose((0, "\tPDETECTOR: %s Priority: %d",
+                        active->component->base.pmix_mca_component_name, active->priority));
         }
     }
 

@@ -614,7 +614,7 @@ void pmix_invoke_local_event_hdlr(pmix_event_chain_t *chain)
     bool found;
 
     pmix_output_verbose(2, pmix_globals.debug_output,
-                        "***new PMIX %s:%d invoke_local_event_hdlr for status %s",
+                        "%s:%d invoke_local_event_hdlr for status %s",
                         pmix_globals.myid.nspace, pmix_globals.myid.rank,
                         PMIx_Error_string(chain->status));
 

@@ -88,19 +88,18 @@ static void notification_fn1(size_t evhdlr_registration_id,
         pmix_event_notification_cbfunc_fn_t cbfunc,
         void *cbdata)
 {
-    pmix_output(0,"Client notification_fn, event happened from source %s:%d with status %d with %d info %s type %d  \n",
+    pmix_output_verbose(0,"Client notification_fn, event happened from source %s:%d with status %d with %d info %s type %d  \n",
             source->nspace,source->rank,status, ninfo, info[0].key, info[0].value.type, info[0].value.data);
     if (NULL != cbfunc) {
         cbfunc(PMIX_EVENT_ACTION_COMPLETE, NULL, 0, NULL, NULL, cbdata);
     }
-    pmix_output(0,"Client notification received, i am done");
 }
 
 static void errhandler_reg_callbk1(pmix_status_t status,
         size_t errhandler_ref,
         void *cbdata)
 {
-    pmix_output(0,"Client: errhandler registed in client  %d, ref=%lu",
+    pmix_output_verbose(0,"Client: errhandler registed in client  %d, ref=%lu",
             status, (unsigned long)errhandler_ref);
 
 }
@@ -208,7 +207,7 @@ static void pmix_client_notify_recv(struct pmix_peer_t *peer,
     PMIX_INFO_LOAD(&chain->info[ninfo], PMIX_EVENT_RETURN_OBJECT, NULL, PMIX_POINTER);
 
     pmix_output_verbose(2, pmix_globals.debug_output,
-                        "[%s:%d] IN new client pmix:client_notify_recv - processing event %d, calling errhandler",
+                        "[%s:%d] pmix:client_notify_recv - processing event %d, calling errhandler",
                         pmix_globals.myid.nspace, pmix_globals.myid.rank, chain->status);
 
     pmix_invoke_local_event_hdlr(chain);

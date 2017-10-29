@@ -88,7 +88,6 @@ static pmix_status_t ring_start()
     pmix_status_t rc;
     pmix_pdetector_ring_t *ft_detector = &pmix_pdetector_world_ring;
     fd_event_base = pmix_globals.evbase;
-    pmix_output(0,"[%s:%d] starting the detector for heartbeat", pmix_globals.myid.nspace, pmix_globals.myid.rank);
     PMIX_OUTPUT_VERBOSE((1, pmix_pdetector_base_framework.framework_output,
                          "[%s:%d] starting the detector for heartbeat",
                          pmix_globals.myid.nspace, pmix_globals.myid.rank));
@@ -119,14 +118,14 @@ static pmix_status_t ring_stop(pmix_peer_t *requestor, char *id)
  * event loop and thread
  */
 static void fd_event_cb(int fd, short flags, void* pdetector) {
-    //pmix_output(0,"---event callback for HB");
+    //PMIX_OUTPUT_VERBOSE((0,pmix_pdetector_base_framework.framework_output,"event callback for HB"));
 }
 
 void fd_heartbeat_recv_cb(struct pmix_peer_t *peer,
         pmix_ptl_hdr_t *hdr,
         pmix_buffer_t *buf, void *cbdata)
 {
-    pmix_output(0,"++ft_detectorevent for heartbeat");
+    PMIX_OUTPUT_VERBOSE((0,pmix_pdetector_base_framework.framework_output,"heartbeat received callback"));
 }
 
 void pmix_pdetector_ring_recv_beats(struct pmix_peer_t *peer,
