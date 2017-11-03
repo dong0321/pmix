@@ -88,10 +88,14 @@ static void notification_fn1(size_t evhdlr_registration_id,
         pmix_event_notification_cbfunc_fn_t cbfunc,
         void *cbdata)
 {
-    pmix_output_verbose(0,"Client notification_fn, event happened from source %s:%d with status %d with %d info %s type %d  \n",
-            source->nspace,source->rank,status, ninfo, info[0].key, info[0].value.type, info[0].value.data);
+    pmix_output(0,"Client notification_fn, event happened from source %s:%d with status %d with %d info %s type %d  \n",
+             source->nspace,source->rank,status, ninfo, info[0].key, info[0].value.type, info[0].value.data);
+    //pmix_output_verbose(0,"Client notification_fn, event happened from source %s:%d with status %d with %d info %s type %d  \n",
+    //        source->nspace,source->rank,status, ninfo, info[0].key, info[0].value.type, info[0].value.data);
     if (NULL != cbfunc) {
+        pmix_output(0,"Client notification cbfucn!!");
         cbfunc(PMIX_EVENT_ACTION_COMPLETE, NULL, 0, NULL, NULL, cbdata);
+        pmix_output(0,"Client notification cbfucn!!!");
     }
 }
 
